@@ -2,8 +2,9 @@
 name: CD Workflow
 
 on:
-  pull_request:
-    branches: [ master ]
+  push:
+    branches: 
+      - master
 
 jobs:
   build:
@@ -22,8 +23,12 @@ jobs:
       with:
         name: webpack artifact
         path: public/
+      
   test:
     needs: [build]
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -32,10 +37,10 @@ jobs:
         with:
           name: webpack artifact
           path: public/
-      - name: Use Node.js 10.x
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: 10.x
+          node-version: ${{ matrix.node-version }}
       - name: npm install, test
         run: |
           npm install
