@@ -1,0 +1,50 @@
+# CI->CD workflow
+name: CD Workflow
+
+on:
+  push:
+    branches: 
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 10.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    - run: |
+        npm install
+        npm run build
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: webpack artifact
+        path: public/
+      
+  test:
+    needs: [build]
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: webpack artifact
+          path: public/
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: npm install, test
+        run: |
+          npm install
+          npm test
+        env:
+          CI: true
+        
