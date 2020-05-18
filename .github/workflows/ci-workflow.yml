@@ -54,9 +54,13 @@ jobs:
     needs: [build, test]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v1
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - run: |
           az group create -n ${{ env.AZURE_RESOURCEGROUP_NAME }} -l australiasoutheast 
           az deployment group create -n ghaction -g ${{ env.AZURE_RESOURCEGROUP_NAME }} --template-file deployment/azuredepoy.json
+      - name: logout
+        run: |
+          az logout
