@@ -51,6 +51,7 @@ jobs:
           CI: true
         
   dev-deployment:
+    needs: [build, test]
     runs-on: ubuntu-latest
     steps:
       - run: |
