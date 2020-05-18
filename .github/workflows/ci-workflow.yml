@@ -5,7 +5,9 @@ on:
   push:
     branches: 
       - master
-
+env:
+  AZURE_RESOURCEGROUP_NAME: "rg-aa-github-deployment"
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -48,3 +50,9 @@ jobs:
         env:
           CI: true
         
+  dev-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          az group create -n ${{ env.AZURE_RESOURCEGROUP_NAME }} -l australiasoutheast 
+          az group deployment create -n ghaction -g ${{ env.AZURE_RESOURCEGROUP_NAME }} --template-file deployment/azuredepoy.json
