@@ -68,6 +68,7 @@ jobs:
         uses: chrnorm/deployment-action@v1.2.0
         with:
           token: ${{ github.token }}
+          ref: ${{ github.event.client_payload.pull_request.head.sha }}
           environment: staging
       - uses: azure/login@v1
         with:
