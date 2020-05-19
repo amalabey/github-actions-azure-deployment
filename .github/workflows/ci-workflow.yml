@@ -60,6 +60,12 @@ jobs:
         with:
           name: webpack artifact
           path: public/
+      - name: Create Github Deployment
+        id: deployment
+        uses: chrnorm/deployment-action@v1.2.0
+        with:
+          token: ${{ github.token }}
+          environment: staging
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -73,11 +79,20 @@ jobs:
           cp *.html published/
           cp -r public published/
       - name: 'Azure webapp deploy'
+        id: appsvc-deployment
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           slot-name: staging
           package: 'published/' 
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@releases/v1
+        with:
+          token: "${{ github.token }}"
+          target_url: ${{ steps.appsvc-deployment.outputs.webapp-url }}
+          state: "success"
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
       - name: logout
         run: |
           az logout
