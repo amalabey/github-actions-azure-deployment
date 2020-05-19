@@ -7,6 +7,7 @@ on:
       - master
 env:
   AZURE_RESOURCEGROUP_NAME: "rg-aa-github-deployment"
+  AZURE_WEBAPP_NAME: "as-github-cd-aa"
   
 jobs:
   build:
@@ -61,6 +62,11 @@ jobs:
       - run: |
           az group create -n ${{ env.AZURE_RESOURCEGROUP_NAME }} -l australiasoutheast 
           az deployment group create -n ghaction -g ${{ env.AZURE_RESOURCEGROUP_NAME }} --template-file deployment/azuredeploy.json
+      - name: 'Azure webapp deploy'
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          package: 'public/' 
       - name: logout
         run: |
           az logout
