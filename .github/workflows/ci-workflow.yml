@@ -4,6 +4,9 @@ on:
   push:
     branches: 
       - master
+  pull_request:
+    branches: 
+      - master
 env:
   AZURE_RESOURCEGROUP_NAME: "rg-aa-github-deployment"
   AZURE_WEBAPP_NAME: "as-github-cd-aa"
@@ -90,7 +93,7 @@ jobs:
         uses: chrnorm/deployment-status@releases/v1
         with:
           token: "${{ github.token }}"
-          target_url: ${{ steps.appsvc-deployment.outputs.webapp-url }}
+          target-url: ${{ steps.appsvc-deployment.outputs.webapp-url }}
           state: "success"
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
       - name: logout
