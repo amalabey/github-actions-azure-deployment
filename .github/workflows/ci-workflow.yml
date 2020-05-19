@@ -60,7 +60,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - run: |
           az group create -n ${{ env.AZURE_RESOURCEGROUP_NAME }} -l australiasoutheast 
-          az deployment group create -n ghaction -g ${{ env.AZURE_RESOURCEGROUP_NAME }} --template-file deployment/azuredepoy.json
+          az deployment group create -n ghaction -g ${{ env.AZURE_RESOURCEGROUP_NAME }} --template-file deployment/azuredeploy.json
       - name: logout
         run: |
           az logout
