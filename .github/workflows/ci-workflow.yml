@@ -68,8 +68,8 @@ jobs:
           az deployment group create -n ghaction -g ${{ env.AZURE_RESOURCEGROUP_NAME }} --template-file deployment/azuredeploy.json
       - run: |
           mkdir published
-          copy *.html published/
-          copy -r public published/
+          cp *.html published/
+          cp -r public published/
       - name: 'Azure webapp deploy'
         uses: azure/webapps-deploy@v2
         with:
