@@ -1,5 +1,4 @@
-# CI->CD workflow
-name: CD Workflow
+name: CI Workflow
 
 on:
   push:
@@ -25,7 +24,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: webpack artifact
-        path: public/
+        path: artifact/
       
   test:
     needs: [build]
@@ -39,7 +38,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: webpack artifact
-          path: public/
+          path: /
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -67,11 +66,15 @@ jobs:
       - run: |
           az group create -n ${{ env.AZURE_RESOURCEGROUP_NAME }} -l australiasoutheast 
           az deployment group create -n ghaction -g ${{ env.AZURE_RESOURCEGROUP_NAME }} --template-file deployment/azuredeploy.json
+      - run: |
+          mkdir published
+          copy *.html published/
+          copy -r public published/
       - name: 'Azure webapp deploy'
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: 'public/' 
+          package: 'published/' 
       - name: logout
         run: |
           az logout
